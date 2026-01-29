@@ -1,6 +1,0 @@
-@EfCoreAccessDataDemo_HostAddress = http://localhost:5230
-
-GET {{EfCoreAccessDataDemo_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
