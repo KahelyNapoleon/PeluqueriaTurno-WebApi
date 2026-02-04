@@ -8,11 +8,11 @@ namespace DAL.Repositorios.Interfaces
 {
     public interface IGenericRepository<T> where T : class
     {
-        //Task<IEnumerable<T>> GetAll();
-        //Task<T> GetById(int id);
-        //Task Add(T TEntity);
-        //void Update(T TEntity);
-        //void Remove(T TEntity);
+        Task<IEnumerable<T>> GetAll();
+        Task<T> GetById(int id);
+        Task Add(T TEntity);
+        Task Update(T TEntity);
+        Task Remove(T TEntity);
 
     }
 }
