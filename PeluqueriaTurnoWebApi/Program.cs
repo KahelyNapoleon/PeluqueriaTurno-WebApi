@@ -16,6 +16,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//aqui agregar el repositorio y servicios
+
+//y aqui agregar el servicicio de validaciones
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
