@@ -7,23 +7,33 @@ using BLL.Result;
 using BLL.Services.Interfaces;
 using DAL.Repositorios;
 using DAL.Repositorios.Interfaces;
+using FluentValidation;
 
 namespace BLL.Services
 {
     public class GenericService<T> : IGenericService<T> where T : class
     {
         private IGenericRepository<T> _repository;
-        public GenericService(IGenericRepository<T> repository)
+        private IValidator<T> _validator;
+        public GenericService(IGenericRepository<T> repository, IValidator<T> validator)
         {
             _repository = repository;
+            _validator = validator;
         }
 
-        public Task<Result<T>> Add(T TEntity)
+        public async Task<Result<T>> Add(T TEntity)
         {
-            throw new ArgumentNullException();
             //Validacion de la entidad
             //Si es correcto agregar
             //Si no es correcto lanzar error
+            var validationResult = await _validator.ValidateAsync(TEntity);
+            if (!validationResult.IsValid)
+            {
+                return Result<T>.Fail(validationResult.Errors.ToString()!);
+            }
+
+            await _repository.Add(TEntity);
+            return Result<T>.Succes(TEntity);
 
         }
 
@@ -61,9 +71,26 @@ namespace BLL.Services
             return Result<T>.Succes(TEntity);
         }
 
-        public Task<Result<T>> Update(int id, T TEntity)
+        public async Task<Result<T>> Update(int id, T TEntity)
         {
-            throw new NotImplementedException();
+            var entityExiste = await _repository.GetById(id);
+            if (entityExiste == null)
+            {
+                return Result<T>.Fail("Id invalido, no existe en los registros");
+            }
+
+            var validationResult = await _validator.ValidateAsync(TEntity);
+            if (!validationResult.IsValid)
+            {
+                return Result<T>.Fail(validationResult.Errors.ToString()!);
+            }
+
+            //Aca falta cambiar los datos de cada propeidad de entityExiste por los de TEntity
+            //que son los nuevos datos que actualizan.
+            entityExiste = TEntity;
+            await _repository.Update(entityExiste);
+
+            return Result<T>.Succes(entityExiste);
         }
     }
 }
