@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BLL.DTOs.TurnoDTOs
+namespace PeluqueriaTurnoWebApi.DTOs.TurnoDTOs
 {
     internal class TurnoUpdateDTO
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BLL.DTOs.PagoDTOs
+namespace PeluqueriaTurnoWebApi.DTOs.PagoDTOs
 {
     internal class PagoUpdateDTO
     {
