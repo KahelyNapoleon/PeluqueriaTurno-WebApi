@@ -45,10 +45,20 @@ namespace DAL.Repositorios
             await SaveChangesAsync();
         }
 
-        //correguir las advertencias.
-        public async Task Update(T TEntity)
+        /// <summary>
+        /// Actualizar un registro de modelo de entidad
+        /// </summary>
+        /// <param name="id">Busca el registro de entidad de modelo</param>
+        /// <param name="TEntity">De tipo DTO con las propiedades nuevas para actualizar
+        /// el registro de entidad</param>
+        /// <returns>No retorna nada, realiza tal cambio en la base de datos</returns>
+        public async Task Update(int id, T TEntity)
         {
-            _dbContext.Entry(TEntity).State = EntityState.Modified;
+            var entity = await _dbSet.FindAsync(id);
+            //Y que sucede si TEntity no es del mism otipo que entity?
+            //EFCore resuelve esto, actualiza las propiedades, del modelo de entidad, de nombre
+            //que coinciden con las del objeto de tipo DTO
+            _dbContext.Entry(entity!).CurrentValues.SetValues(TEntity);
             await SaveChangesAsync();
         }
 

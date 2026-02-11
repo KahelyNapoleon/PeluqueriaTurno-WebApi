@@ -21,11 +21,8 @@ namespace BLL.Services
             _validator = validator;
         }
 
-        public async Task<Result<T>> Add(T TEntity)
+        public virtual async Task<Result<T>> Add(T TEntity)
         {
-            //Validacion de la entidad
-            //Si es correcto agregar
-            //Si no es correcto lanzar error
             var validationResult = await _validator.ValidateAsync(TEntity);
             if (!validationResult.IsValid)
             {
@@ -37,7 +34,7 @@ namespace BLL.Services
 
         }
 
-        public async Task<Result<string>> Delete(int id)
+        public virtual async Task<Result<string>> Delete(int id)
         {
             var TEntity = await _repository.GetById(id);
             if (TEntity == null)
@@ -49,7 +46,7 @@ namespace BLL.Services
             return Result<string>.Succes("Registro eliminado");
         }
 
-        public async Task<Result<IEnumerable<T>>> GetAll()
+        public virtual async Task<Result<IEnumerable<T>>> GetAll()
         {
             var TEntities = await _repository.GetAll();
             if (!TEntities.Any())
@@ -60,7 +57,7 @@ namespace BLL.Services
             return Result<IEnumerable<T>>.Succes(TEntities);
         }
 
-        public async Task<Result<T>> GetById(int id)
+        public virtual async Task<Result<T>> GetById(int id)
         {
             var TEntity = await _repository.GetById(id);
             if (TEntity == null)
@@ -71,26 +68,26 @@ namespace BLL.Services
             return Result<T>.Succes(TEntity);
         }
 
-        public async Task<Result<T>> Update(int id, T TEntity)
+        public virtual async Task<Result<T>> Update(int id, T TEntity)
         {
+            // Validamos que el tipo de entrada Id exista.
             var entityExiste = await _repository.GetById(id);
             if (entityExiste == null)
             {
                 return Result<T>.Fail("Id invalido, no existe en los registros");
             }
 
+            //Validamos que los datos ingresados a TEntity sean correctos
             var validationResult = await _validator.ValidateAsync(TEntity);
             if (!validationResult.IsValid)
             {
                 return Result<T>.Fail(validationResult.Errors.ToString()!);
             }
 
-            //Aca falta cambiar los datos de cada propeidad de entityExiste por los de TEntity
-            //que son los nuevos datos que actualizan.
-            entityExiste = TEntity;
-            await _repository.Update(entityExiste);
+            //ejecuta el metodo de repositorio 'Update' con el Id y tipo validados.
+            await _repository.Update(id ,entityExiste);
 
-            return Result<T>.Succes(entityExiste);
+            return Result<T>.Succes(entityExiste);        
         }
     }
 }

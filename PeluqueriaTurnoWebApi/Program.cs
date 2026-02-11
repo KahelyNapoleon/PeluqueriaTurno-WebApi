@@ -13,7 +13,13 @@ options.UseSqlServer(
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddEndpointsApiExplorer();
+
+//SWAGGER - (DOCUMENTATION)
 builder.Services.AddSwaggerGen();
+
+//SERILOG
+
+//IDENTITY
 
 //FLUENTVALIDATION INYECTIONS
 

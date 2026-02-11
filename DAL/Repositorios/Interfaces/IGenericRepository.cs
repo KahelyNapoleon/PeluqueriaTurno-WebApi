@@ -11,7 +11,7 @@ namespace DAL.Repositorios.Interfaces
         Task<IEnumerable<T>> GetAll();
         Task<T> GetById(int id);
         Task Add(T TEntity);
-        Task Update(T TEntity);
+        Task Update(int id,T TEntity);
         Task Remove(T TEntity);
 
     }
