@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using DAL.Identity;
 using DomainLayer.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Data;
 
-public partial class ApplicationDbContext : DbContext
+public partial class ApplicationDbContext : IdentityDbContext<AppUser>
 {
     public ApplicationDbContext()
     {
@@ -39,6 +41,16 @@ public partial class ApplicationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        //Identity Aggregate
+        base.OnModelCreating(modelBuilder);
+
+        //IdentityUser -> AppUser
+        modelBuilder.Entity<AppUser>()
+            .HasOne(u => u.Cliente)
+            .WithOne()
+            .HasForeignKey<AppUser>(u => u.ClienteId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         modelBuilder.Entity<Cliente>(entity =>
         {
             entity.HasKey(e => e.ClienteId).HasName("PK__Clientes__71ABD08713A28857");
