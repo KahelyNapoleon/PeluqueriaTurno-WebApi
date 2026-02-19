@@ -1,0 +1,8 @@
+﻿[CAMBIOS REALIZADOS, DATOS RELEVEANTES Y SEGUIMIENTO DE ESTA CAPA DE IDENTITY]
+1-Cambio en la herencia de la clase ApplicationDbContext por la de IdentityDbContext
+2-Nueva clase AppUser que hereda de IdentityUser- la misma agrega un campo clienteId a AspNetUser
+3-Codigo en modelBuilder en FluentApi para el nuevo campo de IdentityUser
+4-Registro del nuevo servicio de identity mas bien del dbcontext de identity en el contenedor de inyeccion de dependencias.
+5-Ingresar las propeidades para la configuracion de JWT token.
+6-Agregar el servicio "AddAuthentication" que utilizara la autenticacion por medio de JWT.
+-Falta generar la primera migracion con el objetivo de crear y guardar los cambios que se realizaran en la BD de identity.

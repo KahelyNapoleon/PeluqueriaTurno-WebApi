@@ -11,6 +11,6 @@ namespace DAL.Identity
     public class AppUser : IdentityUser
     {
         public int? ClienteId { get; set; }
-        public Cliente Cliente { get; set; }    
+        public Cliente? Cliente { get; set; }    
     }
 }
