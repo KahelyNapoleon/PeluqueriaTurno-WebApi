@@ -1,0 +1,23 @@
+﻿[PROYECTO PRINCIPAL PeluqueriaTurnoWebApi]
+1-Para crear una migracion en DAL que agregara las tablas en la base de datos que se esta utilizando
+se tuvo que corregir la linea de comando ya que tal migracion necesita de Program.cs que 
+se encuentra en la capa principal del proyecto.
+2-Comando que se tuvo que utilizar es:
+dotnet ef database update --startup-project ..\PeluqueriaTurnoWebApi
+ ->La cual hace referencia al proyecto principal y a su vez en tal proeycto se ah agregado
+ los paquetes referentes a entityFramework y entityFramework.Design por ende cambios y 
+ detalles a tener en cuenta.
+
+[RAMA-IDENTITY-AND-SECURITY]
+1-JwtConfig-> ESTA COONFIGURACION DEBE SER GUARDADA EN AZURE KEY-VAULT para mayor seguridad.
+2-DETALLE: Se ah elminado la base de datos y generado una nueva actualizacion de la base de datos
+por medio de EFCore ->  dotnet ef database update --project DAL --startup-project PeluqueriaTurnoWebApi
+Build started... por un error conceptual en el que se elimino el cuerpo de los metodos up, lo que 
+dejo a la actualizacion sin poder crear ninguna tabla de aspnetUser.
+
+[TAREAS PENDIENTES]
+1-CREAR ENDPOINTS BASICOS DE IDENTITY
+2-TENER EN CUENTA QUE EN LA CONFIGURACION DE JWTBearer LAS PROPEIDADES ESTAN EN APPSETTINGS->CAMBIARLAS A AZURE KEY-VAULT.
+3-PROTECCION DE ENDPOIINTS -> [Authorize]
+4-CREAR ROLES INICIALES
+5-RESUMEN: Autenticacion Real->Autorizacion->Emision de token->Proteccion de endpoints.

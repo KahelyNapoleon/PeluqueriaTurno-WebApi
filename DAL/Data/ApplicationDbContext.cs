@@ -9,9 +9,6 @@ namespace DAL.Data;
 
 public partial class ApplicationDbContext : IdentityDbContext<AppUser>
 {
-    public ApplicationDbContext()
-    {
-    }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
