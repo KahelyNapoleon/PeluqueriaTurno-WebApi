@@ -1,4 +1,5 @@
 ﻿using Contracts.DTOs.ServicioDTOs;
+using Contracts.DTOs.TurnoServicioDTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,8 @@ namespace Contracts.DTOs.TurnoDTOs
 
         public DateOnly FechaTurno { get; set; }
 
-        public List<int> ServiciosId { get; set; } = new List<int>();
+        //Parece ser que es mejor que sea una lista de enteros paara referir los serivicos a actuializar.
+        public List<int> ServiciosIds { get; set; } = new List<int>();
       
     }
 }

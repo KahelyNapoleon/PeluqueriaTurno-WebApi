@@ -20,10 +20,12 @@ namespace BLL.Validations
                 .GreaterThan(new TimeOnly(9,0)).WithMessage("La hora debe ser mayor a las 9:00am.")
                 .LessThan(new TimeOnly(18,0)).WithMessage("La hora debe ser menor a las 18:00pm.");
             RuleFor(t => t.FechaTurno).NotNull().GreaterThan(DateOnly.FromDateTime(DateTime.Today));
-            RuleFor(t => t.ServiciosId).NotNull().WithMessage("La lista no debe estar vacia.")
+            RuleFor(t => t.ServiciosIds).NotNull().WithMessage("La lista no debe estar vacia.")
                 .Must(ids => ids == null || ids.Distinct().Count() ==ids.Count())
-                .WithMessage("Hay uno o mas servicios repetidos."); // Aca debo validar que no haya ids repetidos.
+                .WithMessage("Hay uno o mas servicios repetidos.");
   
         }
+
+     
     }
 }

@@ -20,15 +20,19 @@ namespace BLL.MappingMethods
             };
         }
 
-        public void UpdateEntity(ClienteCreateUpdateDTO dto, Cliente c)
+        public Cliente ToUpdateEntity(int id,ClienteCreateUpdateDTO dto)
         {
-            c.Nombre = dto.Nombre;
-            c.Apellido = dto.Apellido;
-            c.NroCelular= dto.NroCelular;
-            c.CorreoElectronico= dto.CorreoElectronico;
-            c.FechaNacimiento = dto.FechaNacimiento;
-            c.Preferencias = dto.Preferencias;
-            c.Observaciones = dto.Observaciones;
+            return new Cliente
+            {
+                ClienteId = id,
+                Nombre = dto.Nombre,
+                Apellido = dto.Apellido,
+                NroCelular = dto.NroCelular,
+                CorreoElectronico = dto.CorreoElectronico,
+                FechaNacimiento = dto.FechaNacimiento,
+                Preferencias = dto.Preferencias,
+                Observaciones = dto.Observaciones
+            };
         }
 
         public ClienteReadDTO ToReadDTO(Cliente c)

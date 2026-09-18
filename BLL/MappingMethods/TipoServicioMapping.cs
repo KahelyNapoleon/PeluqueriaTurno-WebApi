@@ -16,9 +16,13 @@ namespace BLL.MappingMethods
             };
         }
 
-        public void UpdateEntity(TipoServicioCreateUpdateDTO dto, TipoServicio ts)
+        public TipoServicio ToUpdateEntity(int id, TipoServicioCreateUpdateDTO dto)
         {
-            ts.Descripcion = dto.Descripcion;
+            return new TipoServicio
+            {
+                TipoServicioId = id,
+                Descripcion = dto.Descripcion
+            };
         }
 
         public  TipoServicio ToEntity( TipoServicioCreateUpdateDTO t)

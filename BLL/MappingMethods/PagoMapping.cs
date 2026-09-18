@@ -30,11 +30,16 @@ namespace BLL.MappingMethods
             };
         }
 
-        public void UpdateEntity( PagoCreateUpdateDTO dto, Pago p)
+        public Pago ToUpdateEntity(int id, PagoCreateUpdateDTO p)
         {
-            p.MetodoPagoId = dto.MetodoPagoId;
-            p.MontoTotal = dto.MontoTotal;
-            p.FechaPago = dto.FechaPago;
+            return new Pago
+            {
+                PagoId = id,
+                TurnoId = p.TurnoId,
+                MetodoPagoId = p.MetodoPagoId,
+                MontoTotal = p.MontoTotal,
+                FechaPago = p.FechaPago
+            };
 
         }
     }

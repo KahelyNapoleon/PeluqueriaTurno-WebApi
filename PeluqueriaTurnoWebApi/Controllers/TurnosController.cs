@@ -52,10 +52,22 @@ namespace PeluqueriaTurnoWebApi.Controllers
             return CreatedAtAction(nameof(GetTurno), new { id = agregarTurno.Data!.TurnoId}, agregarTurno.Data);
         }
 
-        [HttpPut("{id:int}")]
-        public async Task<ActionResult> UpdateTurno([FromBody] TurnoCreateUpdateDTO turno, [FromRoute] int id)
+        [HttpPut("{id:int}/EstadoTurno")]
+        public async Task<ActionResult> UpdateEstadoTurno([FromBody] int estadoturno, [FromRoute] int id)
         {
-            var updateTurno = await _turnoService.Update(id, turno);
+            var updateTurno = await _turnoService.UpdateEstadoTurno(id, estadoturno);
+            if (!updateTurno.IsValid)
+            {
+                return BadRequest(updateTurno.Errors);
+            }
+
+            return NoContent();
+        }
+
+        [HttpPut("{turnoId:int}/FechaYHora")]
+        public async Task<ActionResult> UpdateFechaYHoraTurno(int turnoId, DateOnly nuevaFecha, TimeOnly nuevaHora)
+        {
+            var updateTurno = await _turnoService.UpdateFechaYHora(turnoId, nuevaFecha, nuevaHora);
             if (!updateTurno.IsValid)
             {
                 return BadRequest(updateTurno.Errors);

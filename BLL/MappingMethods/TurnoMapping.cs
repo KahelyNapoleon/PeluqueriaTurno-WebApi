@@ -1,5 +1,6 @@
 ﻿using BLL.Mapping;
 using Contracts.DTOs.TurnoDTOs;
+using Contracts.DTOs.TurnoServicioDTOs;
 using DomainLayer.Models;
 
 namespace BLL.MappingMethods
@@ -15,19 +16,28 @@ namespace BLL.MappingMethods
                 FechaTurno = t.FechaTurno,
                 HoraTurno = t.HoraTurno,
                 ClienteId = t.ClienteId,
-                EstadoTurnoDetalle = t.EstadoTurno.Descripcion,
-                ServiciosId = t.TurnoServicios.Select(ts => ts.ServicioId)
-                
+                EstadoTurnoId = t.EstadoTurnoId,
+                Servicios = t.TurnoServicios.Select(ts => new TurnoServicioReadDTO
+                {
+                    ServicioId = ts.ServicioId,
+                    MontoAplicado = ts.MontoAplicado,
+                    TiempoAplicado = ts.TiempoAplicado
+                })
+
 
             };
         }
-        public void UpdateEntity(TurnoCreateUpdateDTO dto, Turno t)
+        public Turno ToUpdateEntity(int id,TurnoCreateUpdateDTO dto)
         {
-            t.Detalle = dto.Detalle;
-            t.FechaTurno = dto.FechaTurno;
-            t.HoraTurno = dto.HoraTurno;
-            t.ClienteId = dto.ClienteId;
-            t.EstadoTurnoId = dto.EstadoTurnoId;
+            return new Turno
+            {
+                TurnoId = id,
+                Detalle = dto.Detalle,
+                ClienteId = dto.ClienteId,
+                EstadoTurnoId = dto.EstadoTurnoId,
+                HoraTurno = dto.HoraTurno,
+                FechaTurno = dto.FechaTurno
+            };
         }
         public Turno ToEntity(TurnoCreateUpdateDTO t)
         {

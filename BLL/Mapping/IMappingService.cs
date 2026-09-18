@@ -10,8 +10,9 @@ namespace BLL.Mapping
                                                  where ReadDto : class
                                                  where CreateUpdateDto : class
     {
+        
         Entity ToEntity(CreateUpdateDto dto);
-        void UpdateEntity(CreateUpdateDto dto, Entity entity);
+        Entity ToUpdateEntity(int id,CreateUpdateDto dto);
         ReadDto ToReadDTO(Entity entity);       
         
     }

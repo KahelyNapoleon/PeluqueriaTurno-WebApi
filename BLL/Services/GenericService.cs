@@ -115,7 +115,7 @@ namespace BLL.Services
 
             //Realizo la conversion del valor de entrada entity que actualizar a los valores reales
             //Para luego poder ejecutar el metodo del repositorio de Update(id, entity)
-            var toEntity = _mapper.ToEntity(entity);
+            var toEntity = _mapper.ToUpdateEntity(id,entity);
 
             await _repository.Update(id, toEntity);
 

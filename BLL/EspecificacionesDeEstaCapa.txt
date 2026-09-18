@@ -29,3 +29,15 @@ de datos de turnos->historialTurnos).
 
 [8/25/2026]
 1-En la parte de validacion de Turno (Metodo Add) se debe agregar una regla de validacion en los ids de servicios, para que no haya ids repetidos 
+
+[9/3/2026]
+1-Ver que es mejor si quitar la interfaz de IGenericService de ITurnoService o dejarla tal cual esta y generar el metodo de actualizacion para Detalle,Cliente y EstadoTurno como consecuencia.
+
+[9/10/2026]
+1-Metodos a Revisar de TurnoService: Update, UpdateEstadoTurno, UpdateFechaYHora.
+A-En el metodo 'UpdateFechaYHora' se debe validar la fehca y hora de manera aislada, ya que turnoValidator condiciona este tipo
+de validacion, pero no la aisla para llevar a cabo este metodo en especifico.
+B-UpdateEstadoTurno: Aqui me surge una duda de como actualizar estadoTurno ya que si es de manera manual, problema solucionado
+pero me surge dudas al respecto. Ya que es dificil acondicionar cada metodo de actualizacion para poster el estadoTurno de forma independiente.
+C-Update: este metodo se construyo a partir de la interfaz IGenericService por ende se ah vuelto obligatorio cunplir con dicho metodo
+peor no hay forma de llevar ubn control minucioso de la ejecucion d eeste metodo ya que un turno no deberia actualizarse de una sola pasada.

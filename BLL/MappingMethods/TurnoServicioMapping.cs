@@ -20,12 +20,16 @@ namespace BLL.MappingMethods
             };
         }
 
-        public void UpdateEntity(TurnoServicioCreateUpdateDTO dto, TurnoServicio t)
+        public TurnoServicio ToUpdateEntity(int id, TurnoServicioCreateUpdateDTO t)
         {
-            t.TurnoId = dto.TurnoId;
-            t.ServicioId = dto.ServicioId;
-            t.MontoAplicado = dto.MontoAplicado;
-            t.TiempoAplicado = dto.TiempoAplicado;
+            return new TurnoServicio
+            {
+                TurnoServicioId = id,
+                TurnoId = t.TurnoId,
+                ServicioId = t.ServicioId,
+                MontoAplicado = t.MontoAplicado,
+                TiempoAplicado = t.TiempoAplicado
+            };
         }
 
         public  TurnoServicio ToEntity( TurnoServicioCreateUpdateDTO t)

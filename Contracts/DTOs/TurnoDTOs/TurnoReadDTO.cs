@@ -7,11 +7,11 @@ namespace Contracts.DTOs.TurnoDTOs
         public int TurnoId { get; set; }
         public string Detalle { get; set; } = null!;
         public int ClienteId { get; set; } 
-        public string EstadoTurnoDetalle { get; set; } = null!;
+        public int EstadoTurnoId { get; set; }
         public DateOnly FechaTurno { get; set; }
         public TimeOnly HoraTurno { get; set; }
 
-        public IEnumerable<int> ServiciosId { get; set; } = new List<int>();
+        public IEnumerable<TurnoServicioReadDTO> Servicios { get; set; } = new List<TurnoServicioReadDTO>();
       
 
     }

@@ -20,18 +20,24 @@ namespace BLL.MappingMethods
             };
         }
 
-        public void UpdateEntity(HistorialTurnoCreateUpdateDTO dto, HistorialTurno h)
+        public HistorialTurno ToUpdateEntity(int id,HistorialTurnoCreateUpdateDTO dto)
         {
-            h.FechaHoraActual = dto.FechaHoraActual;
-            h.FechaHoraAnterior = dto.FechaHoraAnterior;
-            h.EstadoTurnoAnterior = dto.EstadoTurnoAnterior;
-            h.EstadoTurnoActual = dto.EstadoTurnoActual;
+            return new HistorialTurno
+            {
+                HistorialTurnoId = id,
+                TurnoId = dto.TurnoId,
+                FechaHoraActual =   dto.FechaHoraActual,
+                FechaHoraAnterior = dto.FechaHoraAnterior,
+                EstadoTurnoActual = dto.EstadoTurnoActual,
+                EstadoTurnoAnterior = dto.EstadoTurnoAnterior
+            };
         }
 
         public HistorialTurno ToEntity(HistorialTurnoCreateUpdateDTO h)
         {
             return new HistorialTurno
             {
+                TurnoId = h.TurnoId,
                 FechaHoraActual = h.FechaHoraActual,
                 FechaHoraAnterior = h.FechaHoraAnterior,
                 EstadoTurnoActual = h.EstadoTurnoActual,

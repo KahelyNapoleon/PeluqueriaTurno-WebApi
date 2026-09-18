@@ -15,9 +15,13 @@ namespace BLL.MappingMethods
             };
         }
 
-        public void UpdateEntity(EstadoTurnoCreateUpdateDTO estadoTurnoDto, EstadoTurno estadoTurno)
+        public EstadoTurno ToUpdateEntity(int id, EstadoTurnoCreateUpdateDTO dto)
         {
-            estadoTurno.Descripcion = estadoTurnoDto.Descripcion;
+            return new EstadoTurno
+            {
+                EstadoTurnoId = id,
+                Descripcion = dto.Descripcion
+            };
         }
 
         public EstadoTurnoReadDTO ToReadDTO(EstadoTurno e)

@@ -54,7 +54,7 @@ namespace DAL.Repositorios
         public async Task<IEnumerable<Turno?>> GetAllTurnoWithServices()
         {
             var query = _dbContext.Turnos
-                .Include(t => t.TurnoServicios)  //.Select(ts => ts.ServicioId))   
+                .Include(t => t.TurnoServicios)  
                 .ToListAsync();
                 
             return await query;
