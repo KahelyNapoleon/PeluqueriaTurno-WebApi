@@ -262,7 +262,8 @@ namespace BLL.Services
                 return Result<TurnoReadDTO>.Fail($"TurnoId {TurnoId} inexistente o incorrecto");
             }
 
-            bool esValido = Enum.IsDefined(typeof(EstadoTurnoEnum), estadoTurnoId); //Valida que el estadoTurnoID sea valido por medio de los valores de Enum que lo definen.
+            //Valida que el estadoTurnoID sea valido por medio de los valores de Enum que lo definen.
+            bool esValido = Enum.IsDefined(typeof(EstadoTurnoEnum), estadoTurnoId); 
             if (!esValido)
             {
                 return Result<TurnoReadDTO>.Fail($"El id de estado turno no existe");
@@ -272,7 +273,31 @@ namespace BLL.Services
 
             try
             {
+                //---------------------Actualizar Turno.EstadoTurnoId--------------
                 turno.EstadoTurnoId = estadoTurnoId;
+
+                //---------------------Agregar HistorialTurno---------------------
+
+                var nuevohistorialTurno = new HistorialTurnoCreateUpdateDTO
+                {
+                    TurnoId = TurnoId,
+                    FechaHoraAnterior = new DateTimeOffset(turno.FechaTurno, turno.HoraTurno, new TimeSpan(-3)),
+                    FechaHoraActual = new DateTimeOffset(turno.FechaTurno, turno.HoraTurno, new TimeSpan(-3)),
+                    EstadoTurnoAnterior = turno.EstadoTurnoId,
+                    EstadoTurnoActual = estadoTurnoId
+                };
+
+                var validarHistorialTurno = _validatorHistorialTurno.Validate(nuevohistorialTurno);
+                if (!validarHistorialTurno.IsValid)
+                {
+                    return Result<TurnoReadDTO>.Fail(String.Concat(", ", validarHistorialTurno.Errors.ToList()));
+                }
+
+                var nuevoHistorialTurnoToEntity = _mapperHistorialTurno.ToEntity(nuevohistorialTurno);
+
+                await _unitOfWork.HistorialTurnoRepository.Add(nuevoHistorialTurnoToEntity);
+
+                //---------------------FIN Agregar HistorialTurno---------------------
 
                 await _unitOfWork.SaveChangeAsync();
 
@@ -300,10 +325,39 @@ namespace BLL.Services
 
             await _unitOfWork.BeginTransactionAsync();
 
+            //DAtos para el HistorialTurno
+            var fechaTurnoAnterior = turno.FechaTurno;
+            var horaTurnoAnterior = turno.HoraTurno;
+
             try
             {
+
+                //-------------------Actualiza TURNO---------------------------------------
                 turno.FechaTurno = nuevaFecha;
                 turno.HoraTurno = nuevaHora;
+
+                //-------------------INICIO HISTORIAL TURNO---------------------------------------
+
+                var nuevoHistorialTurno = new HistorialTurnoCreateUpdateDTO
+                {
+                    TurnoId = TurnoId,
+                    FechaHoraAnterior = new DateTimeOffset(fechaTurnoAnterior,horaTurnoAnterior, new TimeSpan(-3)),
+                    FechaHoraActual = new DateTimeOffset(nuevaFecha,nuevaHora,new TimeSpan(-3)),
+                    EstadoTurnoAnterior = turno.EstadoTurnoId,
+                    EstadoTurnoActual = (int)EstadoTurnoEnum.Modificado,
+                };
+
+                var validarHistorialTurno = _validatorHistorialTurno.Validate(nuevoHistorialTurno);
+                if (!validarHistorialTurno.IsValid)
+                {
+                    return Result<TurnoReadDTO>.Fail(String.Concat(", ",validarHistorialTurno.Errors.ToList()));
+                }
+
+                var nuevoHistorialTurnoToEntity = _mapperHistorialTurno.ToEntity(nuevoHistorialTurno);
+
+                await _unitOfWork.HistorialTurnoRepository.Add(nuevoHistorialTurnoToEntity);
+
+                //-------------------FIN HISTORIAL TURNO---------------------------------------
 
                 await _unitOfWork.SaveChangeAsync();
 
@@ -318,6 +372,84 @@ namespace BLL.Services
                 return Result<TurnoReadDTO>.Fail($"Algo salio mal al intentar actualizar fecha y hora del turno: {ex.Message}");
             }
 
+
+        }
+
+
+        public async Task<Result<TurnoReadDTO>> UpdateServicios(int turnoId, List<int> serviciosNuevos)
+        {
+            if (turnoId == 0 ) throw new ArgumentException("TurnoId no puede ser 0");
+
+
+            //Buscar el objeto turno de id 'turnoId' y comprobar que no sea nulo
+            var turno = await _unitOfWork.TurnoRepository.GetById(turnoId);
+            if (turno == null)
+            {
+                return Result<TurnoReadDTO>.Fail($"El turno de id {turnoId} no es valido, ingrese un id existente.");
+            }
+
+            await _unitOfWork.BeginTransactionAsync();
+
+            try
+            {
+                //Obtener los servicioIds de los registros de TurnoServicio.TurnoId = turnoId
+                var serviciosTurno = _unitOfWork.TurnoServicioRepository.GetAllServiciosWithTurnoId(turnoId).Result;
+
+                //Exceptuar servicios viejos menos los nuevos
+                var serviciosAEliminar = serviciosNuevos.Except((IEnumerable<int>)serviciosTurno);
+                //Exceptuar servicios nuevos menos los viejos
+                var serviciosAgregar = serviciosTurno.Except(serviciosNuevos);
+
+                //Obtener todas las entidades de TurnoServicio.TurnoId = turnoId.
+                var turnoServicios = _unitOfWork.TurnoServicioRepository.GetAllTurnoServicioByTurnoId(turnoId).Result;
+
+                var turnoServiciosAEliminar = turnoServicios.Where(ts => serviciosAEliminar.Contains(ts.ServicioId));
+                //var turnoServicioAgregar = turnoServicios.Where(ts => serviciosAgregar.Contains(ts.ServicioId));
+
+
+                foreach (var servicioId in serviciosAgregar)
+                {
+                    var servicioEntity = await _unitOfWork.ServicioRepository.GetById(servicioId);
+                    await _unitOfWork.TurnoServicioRepository.Add(new TurnoServicio
+                    {
+                        TurnoId = turnoId,
+                        ServicioId = servicioId,
+                        MontoAplicado = servicioEntity!.Precio,
+                        TiempoAplicado = servicioEntity.Duracion
+
+                    });
+                }
+                foreach (var servicio in turnoServiciosAEliminar)
+                {
+                    await _unitOfWork.TurnoServicioRepository.Remove(servicio);
+                }
+
+                //-----------fin actualizacion servicios-----------------------------
+
+                //------------HistorialTurno-----------------------------------------
+
+                var turnoEstadoActualizado = this.UpdateEstadoTurno(turnoId, (int)EstadoTurnoEnum.Modificado);
+
+                await _unitOfWork.SaveChangeAsync();
+
+                await _unitOfWork.CommitAsync();
+
+                var turnoToEntity = _mapperTurno.ToReadDTO(turno);
+
+                return Result<TurnoReadDTO>.Succes(turnoToEntity);
+
+            }
+            catch(Exception ex)
+            {
+                await _unitOfWork.RollBackAsync();
+                var mensaje = ex.InnerException!.Message;
+                return Result<TurnoReadDTO>.Fail($"Algo salio mal al actualizar el turno. {mensaje}");
+            }
+
+         
+
+
+      
 
         }
 

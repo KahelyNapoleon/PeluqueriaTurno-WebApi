@@ -9,5 +9,8 @@ namespace DAL.Repositorios.Interfaces
 {
     public interface ITurnoServicioRepository : IGenericRepository<TurnoServicio>
     {
+        Task<IEnumerable<TurnoServicio>> GetAllTurnosServicios();
+        Task<IEnumerable<TurnoServicio>> GetAllTurnoServicioByTurnoId(int turnoId);
+        Task<List<int>> GetAllServiciosWithTurnoId(int id);
     }
 }

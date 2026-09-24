@@ -17,12 +17,12 @@ namespace PeluqueriaTurnoWebApi.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<HistorialTurnoCreateUpdateDTO>>> GetHistorialTurno()
+        public async Task<ActionResult<IEnumerable<HistorialTurnoCreateUpdateDTO>>> GetHistorialTurnos()
         {
             var historialTurnos = await _historialTurnoService.GetAll();
             if (!historialTurnos.IsValid)
             {
-                return BadRequest(historialTurnos.Data);
+                return BadRequest(historialTurnos.Errors);
             }
 
             return Ok(historialTurnos);

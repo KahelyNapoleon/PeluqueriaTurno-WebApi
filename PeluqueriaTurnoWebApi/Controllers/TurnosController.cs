@@ -53,9 +53,9 @@ namespace PeluqueriaTurnoWebApi.Controllers
         }
 
         [HttpPut("{id:int}/EstadoTurno")]
-        public async Task<ActionResult> UpdateEstadoTurno([FromBody] int estadoturno, [FromRoute] int id)
+        public async Task<ActionResult> UpdateEstadoTurno([FromRoute] int id, [FromBody] TurnoUpdateEstadoTurnoDTO estadoTurno)
         {
-            var updateTurno = await _turnoService.UpdateEstadoTurno(id, estadoturno);
+            var updateTurno = await _turnoService.UpdateEstadoTurno(id, estadoTurno.EstadoTurno);
             if (!updateTurno.IsValid)
             {
                 return BadRequest(updateTurno.Errors);
@@ -64,10 +64,10 @@ namespace PeluqueriaTurnoWebApi.Controllers
             return NoContent();
         }
 
-        [HttpPut("{turnoId:int}/FechaYHora")]
-        public async Task<ActionResult> UpdateFechaYHoraTurno(int turnoId, DateOnly nuevaFecha, TimeOnly nuevaHora)
+        [HttpPut("{id:int}/FechaYHora")]
+        public async Task<ActionResult> UpdateFechaYHoraTurno([FromRoute] int id,  [FromBody]TurnoUpdateFechaYHoraDTO fechaHora)
         {
-            var updateTurno = await _turnoService.UpdateFechaYHora(turnoId, nuevaFecha, nuevaHora);
+            var updateTurno = await _turnoService.UpdateFechaYHora(id, fechaHora.Fecha, fechaHora.Hora);
             if (!updateTurno.IsValid)
             {
                 return BadRequest(updateTurno.Errors);

@@ -29,5 +29,26 @@ namespace DAL.Repositorios
         
         }
 
+        public async Task<IEnumerable<TurnoServicio>> GetAllTurnoServicioByTurnoId(int turnoId)
+        {
+            var turnoServicios = _dbContext.TurnoServicios
+                .Where(ts => ts.TurnoId == turnoId)
+                .ToListAsync();
+
+            return await turnoServicios;
+        }
+
+        public async Task<List<int>> GetAllServiciosWithTurnoId(int id)
+        {
+            var servicios =  _dbContext.TurnoServicios
+                .Where(ts => ts.TurnoId == id)
+                .Select(ts => ts.ServicioId);
+                
+
+            return await servicios.ToListAsync();
+                
+                
+        }
+
     }
 }
