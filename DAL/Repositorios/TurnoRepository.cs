@@ -26,15 +26,10 @@ namespace DAL.Repositorios
                 .OrderBy(t => t.TurnoId)
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
-                .Select(t => new Turno
-                {
-                    TurnoId = t.TurnoId,
-                    Detalle = t.Detalle,
-                    FechaTurno = t.FechaTurno,
-                    HoraTurno = t.HoraTurno,
-                    Cliente = t.Cliente,
-                    EstadoTurno = t.EstadoTurno
-                });
+                .Include(t => t.Cliente)
+                .Include(t => t.EstadoTurno)
+                .Include(t => t.TurnoServicios)
+                .Select(t => t);
                 
            
                 return await query.ToListAsync();
@@ -43,11 +38,15 @@ namespace DAL.Repositorios
         public override async Task<Turno?> GetById(int id)
         {
             var query = _dbContext.Turnos
+                .Where(t => t.TurnoId == id)
                  .Include(t => t.Cliente)
                  .Include(t => t.EstadoTurno)
-                 .Include(t => t.TurnoServicios);
+                 .Include(t => t.TurnoServicios)
+                 .FirstOrDefaultAsync();
 
-            return await query.FirstOrDefaultAsync(t => t.TurnoId == id);
+            return await query;
+                
+               
         }
 
         //Reveer//Corregir

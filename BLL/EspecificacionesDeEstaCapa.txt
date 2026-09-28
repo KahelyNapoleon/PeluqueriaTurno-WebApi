@@ -41,3 +41,73 @@ B-UpdateEstadoTurno: Aqui me surge una duda de como actualizar estadoTurno ya qu
 pero me surge dudas al respecto. Ya que es dificil acondicionar cada metodo de actualizacion para poster el estadoTurno de forma independiente.
 C-Update: este metodo se construyo a partir de la interfaz IGenericService por ende se ah vuelto obligatorio cunplir con dicho metodo
 peor no hay forma de llevar ubn control minucioso de la ejecucion d eeste metodo ya que un turno no deberia actualizarse de una sola pasada.
+
+
+
+
+[9/26/2026]
+-FALTO COLOCAR UN CAMPO EN LA ENTIDAD HISTORIALTURNO QUE MUESTRE LA FECHA DE ACTUALIZACION DEL ESTADO DEL TURNO.(detalle)
+
+Veo varios problemas en `UpdateServicios`. El principal es que los conjuntos para **agregar y eliminar están invertidos**.
+
+Si `serviciosTurno` contiene los servicios actuales del turno y `serviciosNuevos` los que querés que queden, calculalos así:
+
+```csharp
+var actuales = /* IDs de servicios asociados actualmente al turno */;
+
+var serviciosAEliminar = actuales.Except(serviciosNuevos).ToList();
+var serviciosAAgregar = serviciosNuevos.Except(actuales).ToList();
+```
+
+En tu código hacés lo contrario: `serviciosNuevos.Except(actuales)` se guarda en `serviciosAEliminar`, y `actuales.Except(serviciosNuevos)` en `serviciosAgregar`. Eso puede hacer que intentes agregar los que ya existen y eliminar los que acabás de pedir.
+
+Además, asegurate de comparar **IDs de servicio**. Si `GetAllServiciosWithTurnoId` devuelve registros `TurnoServicio`, no los conviertas con un cast a `IEnumerable<int>`; proyectá el campo `ServicioId`. Una versión orientativa sería:
+
+```csharp
+var turnoServicios = await _unitOfWork.TurnoServicioRepository
+    .GetAllTurnoServicioByTurnoId(turnoId);
+
+var actuales = turnoServicios
+    .Select(ts => ts.ServicioId)
+    .ToHashSet();
+
+var solicitados = serviciosNuevos.ToHashSet();
+
+var serviciosAEliminar = turnoServicios
+    .Where(ts => !solicitados.Contains(ts.ServicioId))
+    .ToList();
+
+var serviciosAAgregar = solicitados
+    .Except(actuales)
+    .ToList();
+
+foreach (var servicioId in serviciosAAgregar)
+{
+    var servicio = await _unitOfWork.ServicioRepository.GetById(servicioId);
+
+    if (servicio == null)
+        throw new InvalidOperationException($"No existe el servicio {servicioId}.");
+
+    await _unitOfWork.TurnoServicioRepository.Add(new TurnoServicio
+    {
+        TurnoId = turnoId,
+        ServicioId = servicioId,
+        MontoAplicado = servicio.Precio,
+        TiempoAplicado = servicio.Duracion
+    });
+}
+
+foreach (var turnoServicio in serviciosAEliminar)
+{
+    await _unitOfWork.TurnoServicioRepository.Remove(turnoServicio);
+}
+```
+
+Con los datos que mostraste, el turno `1` ya tiene el servicio `2` repetido. La actualización no corregirá esa duplicación automáticamente: el código anterior elimina servicios que ya no estén solicitados, pero si el mismo `ServicioId` aparece más de una vez en los registros actuales, conviene limpiar los duplicados existentes y agregar una restricción única para `(TurnoId, ServicioId)`.
+
+También revisá estas dos líneas:
+
+- Usás `.Result` dentro de un método async. Preferí `await` para evitar bloqueos y excepciones difíciles de interpretar.
+- Si `UpdateEstadoTurno` devuelve `Task`, falta `await`. Y en el `catch`, `ex.InnerException!.Message` puede provocar otra excepción si `InnerException` es `null`; usá `ex.InnerException?.Message ?? ex.Message`.
+
+Por último, en `Add` del turno, si el `TurnoId` es `IDENTITY`, guardá el turno con `SaveChangeAsync()` antes de usar su ID para el historial y `TurnoServicio`. Luego podés guardar los demás registros y confirmar la transacción al final.

@@ -14,7 +14,7 @@ namespace BLL.Result
 
         public Result() { }
 
-        public static Result<T> Fail(params string[] errors)
+        public static Result<T> Fail(params List<string> errors)
         {
             return new Result<T> { IsValid = false, Errors = errors.ToList() };
         }

@@ -68,7 +68,7 @@ namespace PeluqueriaTurnoWebApi.Controllers
 
 
         [HttpDelete("{id:int}")]
-        public async Task<ActionResult> DeleteHistorialTurno([FromBody] int id)
+        public async Task<ActionResult> DeleteHistorialTurno([FromRoute] int id)
         {
             var eliminarHistorialTurno = await _historialTurnoService.Delete(id);
             if (!eliminarHistorialTurno.IsValid)

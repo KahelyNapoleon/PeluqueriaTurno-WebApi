@@ -17,8 +17,10 @@ namespace BLL.MappingMethods
                 HoraTurno = t.HoraTurno,
                 ClienteId = t.ClienteId,
                 EstadoTurnoId = t.EstadoTurnoId,
-                Servicios = t.TurnoServicios.Select(ts => new TurnoServicioReadDTO
+                Servicios = t.TurnoServicios.Where(ts => ts.TurnoId == t.TurnoId).Select(ts => new TurnoServicioReadDTO
                 {
+                    TurnoServicioId = ts.TurnoServicioId,
+                    TurnoId = t.TurnoId,
                     ServicioId = ts.ServicioId,
                     MontoAplicado = ts.MontoAplicado,
                     TiempoAplicado = ts.TiempoAplicado

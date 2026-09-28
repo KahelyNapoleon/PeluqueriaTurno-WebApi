@@ -40,7 +40,7 @@ namespace PeluqueriaTurnoWebApi.Controllers
             return Ok(turno);
         }
 
-        [HttpPost]
+        [HttpPost("Crear/Servicio")]
         public async Task<ActionResult> CreateTurno([FromBody] TurnoCreateUpdateDTO turno)
         {
             var agregarTurno = await _turnoService.Add(turno);
@@ -52,7 +52,7 @@ namespace PeluqueriaTurnoWebApi.Controllers
             return CreatedAtAction(nameof(GetTurno), new { id = agregarTurno.Data!.TurnoId}, agregarTurno.Data);
         }
 
-        [HttpPut("{id:int}/EstadoTurno")]
+        [HttpPut("{id:int}/Actualizar/EstadoTurno")]
         public async Task<ActionResult> UpdateEstadoTurno([FromRoute] int id, [FromBody] TurnoUpdateEstadoTurnoDTO estadoTurno)
         {
             var updateTurno = await _turnoService.UpdateEstadoTurno(id, estadoTurno.EstadoTurno);
@@ -64,10 +64,22 @@ namespace PeluqueriaTurnoWebApi.Controllers
             return NoContent();
         }
 
-        [HttpPut("{id:int}/FechaYHora")]
+        [HttpPut("{id:int}/Actualizar/FechaYHora")]
         public async Task<ActionResult> UpdateFechaYHoraTurno([FromRoute] int id,  [FromBody]TurnoUpdateFechaYHoraDTO fechaHora)
         {
             var updateTurno = await _turnoService.UpdateFechaYHora(id, fechaHora.Fecha, fechaHora.Hora);
+            if (!updateTurno.IsValid)
+            {
+                return BadRequest(updateTurno.Errors);
+            }
+
+            return NoContent();
+        }
+
+        [HttpPut("{id:int}/Actualizar/Servicios")]
+        public async Task<ActionResult> UpdateServicios([FromRoute] int id, TurnoUpdateServicios servicios)
+        {
+            var updateTurno = await _turnoService.UpdateServicios(id, servicios.ServiciosId);
             if (!updateTurno.IsValid)
             {
                 return BadRequest(updateTurno.Errors);

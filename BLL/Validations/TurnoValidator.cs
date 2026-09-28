@@ -15,11 +15,9 @@ namespace BLL.Validations
         {
             RuleFor(t => t.Detalle).NotEmpty();
             RuleFor(t => t.ClienteId).NotNull().GreaterThan(0);
-            RuleFor(t => t.EstadoTurnoId).NotNull().GreaterThan(0).LessThan(8);
-            RuleFor(t => t.HoraTurno).NotNull()
-                .GreaterThan(new TimeOnly(9,0)).WithMessage("La hora debe ser mayor a las 9:00am.")
-                .LessThan(new TimeOnly(18,0)).WithMessage("La hora debe ser menor a las 18:00pm.");
-            RuleFor(t => t.FechaTurno).NotNull().GreaterThan(DateOnly.FromDateTime(DateTime.Today));
+            RuleFor(t => t.EstadoTurnoId).NotNull().GreaterThan(0).LessThan(8).WithMessage("Error en la validacion de EstadoTurnoId");
+            RuleFor(t => t.HoraTurno).NotNull().GreaterThan(new TimeOnly(9,0)).WithMessage("La hora debe ser mayor a las 9:00am.").LessThan(new TimeOnly(18,0)).WithMessage("La hora debe ser menor a las 18:00pm.");
+            RuleFor(t => t.FechaTurno).NotNull().GreaterThan(DateOnly.FromDateTime(DateTime.Today)).WithMessage("Error en la validacion de la Fecha del Turno");
             RuleFor(t => t.ServiciosIds).NotNull().WithMessage("La lista no debe estar vacia.")
                 .Must(ids => ids == null || ids.Distinct().Count() ==ids.Count())
                 .WithMessage("Hay uno o mas servicios repetidos.");
